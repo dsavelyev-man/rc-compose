@@ -1,17 +1,20 @@
 import React, {useEffect} from "react";
 import compose from "./index";
 import {render} from "@testing-library/react";
-import forwardRef from "./ref";
 
 test("basic compose init", () => {
     //@ts-ignore
-    const Component = (props, ref) => {
+    const Component = (props, data) => {
 
         useEffect(() => {
-            console.log(ref)
+            data.state.count.actions.add()
         }, [])
 
-        return <div ref={ref}>Hello rc-compose</div>
+        useEffect(() => {
+            console.log(data.state)
+        })
+
+        return <div>Hello rc-compose</div>
     }
     // const ComposedComponent = compose(Component, {
     //     state: {
@@ -22,7 +25,14 @@ test("basic compose init", () => {
     //     }
     // })
 
-    const Data = forwardRef(Component)
+    const Data = compose(Component, {
+        state: {
+            //@ts-ignore
+            count: () => ({ value: 1, actions: {
+                add: (value: any) => value+1
+            } })
+        }
+    })
 
     //@ts-ignore
     const component = render(<Data/>)

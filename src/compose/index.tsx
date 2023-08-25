@@ -11,19 +11,21 @@ const dataFunctions = {
 }
 
 
-const compose = <T,>(component: FC, data: ComposeData): T => {
+const compose = <T, P>(component: FC, data: ComposeData) => {
     let key: keyof ComposeData;
 
-    // for (key in data) {
-    //     dataFunctions[key](component as FCExtended, data[key] as State)
-    // }
+    const computed: any = {
 
-    const elementType = {
-        $$typeof: REACT_FORWARD_REF_TYPE,
-        render: component,
-    };
+    }
 
-    return component as T
+    //ts-ignore
+    return (props: Parameters<typeof component>) => {
+        for (key in data) {
+            dataFunctions[key](computed, data[key] as State)
+        }
+
+        return component({ ...props }, computed)
+    }
 }
 
 export default compose
